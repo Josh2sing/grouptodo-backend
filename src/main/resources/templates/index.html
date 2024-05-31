@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1 id="userid">User ID: </h1>
+    <div class="auth">
+        <p>Auth</p>
+        <input type="text" name="username" id="username">
+        <button onclick="auth(event)">Submit</button>
+    </div>
+    <div class="groups">
+        <p>Groups</p>
+        <div class="createGroup">
+            <input type="text" name="" id="groupName">
+            <button onclick="createGroup(event)">Create Group</button>
+        </div>
+        <li id="groupList">
+            <p>Group List</p>
+        </li>
+    </div>
+    
+    
+    <script>
+        let userId;
+        let user;
+        function test() {
+            const userTitle = document.getElementById("userid");
+            userTitle.innerHTML = "User ID: " + "josh"
+        }
+        async function auth(event) {
+            event.preventDefault();
+            var username = document.getElementById('username').value;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', '/auth?username=' + encodeURIComponent(username), true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log('Response:', xhr.responseText);
+                    console.log('Response:', xhr.response);
+    
+                    const userTitle = document.getElementById("userid");
+                    const json = JSON.parse(xhr.response);
+                    userTitle.innerHTML = "User ID: " + json.name
+                    userId = json.id
+                    user = json
+                    console.log("USER: " + JSON.stringify(user));
+                }
+            };
+            xhr.send();
+        }
+        async function createGroup(event) {
+            event.preventDefault(); 
+            var xhr = new XMLHttpRequest();
+            const req = {
+                title: document.getElementById("groupName").value,
+                user: user
+            }
+            console.log("req: " + JSON.stringify(req));
+            xhr.open('POST', '/create', true);
+            // xhr.setRequestHeader('Content-Type', 'application/json')
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    console.log('Response:', xhr.response);
+                }
+            };
+            xhr.send(JSON.stringify(req));
+        }
+    </script>
+</body>
+</html>
